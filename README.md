@@ -32,7 +32,7 @@ Strength of your password: 0 of 10
 
 
 ## Build with
-+[Requests](http://docs.python-requests.org/en/master/) - for receiving remote blacklists
++ [Requests](http://docs.python-requests.org/en/master/) - for receiving remote blacklists
 
 
 # Project Goals
