@@ -98,7 +98,7 @@ if __name__ == '__main__':
     remote_blacklist = get_remote_blacklist(REMOTE_BLACKLISTS) if check_connection() else None
     all_blacklists = (local_blacklist, remote_blacklist)
     if not any(all_blacklists):
-        print("WARNING!!! \nInternet connection has not been established...\nLocal blacklist has not been found...\nPassword checking in the blacklist is not available!\n")
+        print("WARNING!!! \nInternet connection has not been established...\nLocal blacklist has not been found...\n")
 
     personal_data = collect_presonal_data()
     usr_password = getpass(prompt='Type your password: ')
