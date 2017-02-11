@@ -14,19 +14,27 @@ REMOTE_BLACKLISTS = {
                 }
 
 
-def check_connection():
+def is_connected():
     test_host = 'www.google.com'
     port = 80
     timeout = 2
     try:
         print('Checking your connection to the Internet...')
         s = socket.create_connection((test_host, port), timeout)
-        print('Connected.')
+        print('Connected.\n')
         s.close()
     except Exception:
-        print("No connection.\n" )
+        print("No connection. Attention!!! Script will work without verification remote blacklists.\n" )
         return False
     return True
+
+
+def is_local_blacklist(filepath):
+    if filepath:
+        return True
+    else:
+        print('Local blacklist has not been declared by user. Script will works without verification local blacklist.\n')
+        return False
 
 
 def collect_presonal_data():
@@ -56,7 +64,7 @@ def get_local_blacklist(local_path):
         return local_blacklist
 
 
-def check_blacklists(password, blacklists_stack):
+def is_password_in_blacklists(password, *blacklists_stack):
     for black_lists in blacklists_stack:
         if black_lists == None:
             continue
@@ -72,11 +80,12 @@ def get_password_strength(password, personal_data, blacklist_inspection):
                     '"digit"': '(?=.*?\d)',
                     '"uppercase"': '(?=.*?[A-Z])',
                     '"lowercase"': '(?=.*?[a-z])',
-                    '"password minimum length"': '[A-Za-z\d]{8,}',
-                    '"Special characters"': '\W_'
+                    '"password minimum length (8 characters)"': '[A-Za-z\d]{8,}',
+                    '"special characters"': '\W+'
                     }
 
     if blacklist_inspection and password not in personal_data.values():
+        print('Passed test of: "into blacklists and personal data"')
         for name, pattern in strength_criteria.items():
             response_status = re.search(pattern, password)
             if response_status:
@@ -86,6 +95,7 @@ def get_password_strength(password, personal_data, blacklist_inspection):
                 print('Not passed test of: {}'.format(name))
         return strength_password
     else:
+        print('Your password has been found in some of blacklists or your personal data:')
         return 0
 
 
@@ -94,15 +104,12 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--local', help="path to local blacklist or filename for current directory.")
     args = parser.parse_args()
 
-    local_blacklist = get_local_blacklist(args.local) if args.local else None
-    remote_blacklist = get_remote_blacklist(REMOTE_BLACKLISTS) if check_connection() else None
-    all_blacklists = (local_blacklist, remote_blacklist)
-    if not any(all_blacklists):
-        print("WARNING!!! \nInternet connection has not been established...\nLocal blacklist has not been found...\n")
+    local_blacklist = get_local_blacklist(args.local) if is_local_blacklist(args.local) else None
+    remote_blacklist = get_remote_blacklist(REMOTE_BLACKLISTS) if is_connected() else None
 
     personal_data = collect_presonal_data()
     usr_password = getpass(prompt='Type your password: ')
     print('Calculating strength of your password, please wait...')
 
-    password_rating = get_password_strength(usr_password, personal_data, check_blacklists(usr_password, all_blacklists))
-    print('Strength of your password: {} of 10'.format(password_rating))
+    password_rating = get_password_strength(usr_password, personal_data, is_password_in_blacklists(usr_password, local_blacklist, remote_blacklist))
+    print('Strength of your password: {} of 10\n'.format(password_rating))
