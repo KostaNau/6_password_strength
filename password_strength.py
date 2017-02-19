@@ -44,7 +44,7 @@ def collect_presonal_data():
     return personal_data
 
 
-def get_blacklists(remote_links, local_path=False):
+def fetch_password_from_blacklist(remote_links, local_path=False):
     if local_path:
         with open(local_path, 'r') as blacklist_file:
             local_blacklist = blacklist_file.read().rsplit()
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     usr_password = getpass(prompt='Type your password: ')
     personal_data = collect_presonal_data()
-    blacklists = get_blacklists(REMOTE_BLACKLISTS, args.local)
+    blacklists = fetch_password_from_blacklist(REMOTE_BLACKLISTS, args.local)
     print('Please wait...')
     blacklist_inspection_result = any(usr_password in x for x in blacklists)
     password_rating = get_password_strength(usr_password, personal_data, blacklist_inspection_result)
