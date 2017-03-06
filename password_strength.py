@@ -30,13 +30,11 @@ def is_connected():
 
 
 def collect_presonal_data():
-    personal_data = {
-        '1. Given Name': None,
-        '2. Family Name': None,
-        '3. City of Birth': None,
-        '4. Date of Brith':None,
-        '5. Your Phone Number': None,
-        }
+    questions = [
+                '1. Given Name', '2. Family Name', '3. City of Birth',
+                '4. Date of Brith', '5. Your Phone Number'
+                ]
+    personal_data = {k: None for k in questions}
 
     for question in sorted(personal_data):
         user_answer = input('{}: '.format(question))
